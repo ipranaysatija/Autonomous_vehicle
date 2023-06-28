@@ -1,0 +1,8 @@
+prefix=/home/ubuntu/Autonomous_vehicle/devel
+
+Name: robot
+Description: Description of robot
+Version: 0.0.0
+Cflags: 
+Libs: -L${prefix}/lib 
+Requires: 

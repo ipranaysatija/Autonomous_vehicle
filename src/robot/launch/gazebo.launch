@@ -1,0 +1,22 @@
+<launch>
+
+  <param name="robot_description" command=" xacro $(find robot)/urdf/robot.xacro"/>
+  <arg name="rviz_config_file" default="$(find mobile_robot)/config/robot.rviz"/>
+
+
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/> 
+  <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui"/> 
+  <node pkg="rviz" type="rviz" name="rviz" args = " -d $(arg rviz_config_file)"/>    
+
+  <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model robot -param robot_description"/>
+  
+  <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    <arg name="world_name" value="$(find robot)/worlds/my.world"/>
+    <arg name="paused" value="false"/>
+    <arg name="use_sim_time" value="true"/>
+    <arg name="gui" value="true"/>
+    <arg name="headless" value="false"/>
+    <arg name="debug" value="false"/>
+  </include>
+
+</launch>
