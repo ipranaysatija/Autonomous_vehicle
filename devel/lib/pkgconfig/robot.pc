@@ -1,4 +1,4 @@
-prefix=/home/ubuntu/Autonomous_vehicle/devel
+prefix=/home/acer/Autonomous_vehicle/devel
 
 Name: robot
 Description: Description of robot
