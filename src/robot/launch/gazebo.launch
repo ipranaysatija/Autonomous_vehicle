@@ -1,11 +1,15 @@
 <launch>
 
   <param name="robot_description" command=" xacro $(find robot)/urdf/robot.xacro"/>
-  <arg name="rviz_config_file" default="$(find robot)/config/robot.rviz"/>
+  <arg name="rviz_config_file" default="$(find robot)/config/rviz_config_maps.rviz"/>
+  <arg name="use_tf_static" default="false"/> 
 
 
-  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"/> 
-  <node pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" name="joint_state_publisher_gui"/> 
+  <node pkg="robot_state_publisher" type="robot_state_publisher" name="robot_state_publisher"> 
+  <param name="use_tf_static" value="$(arg use_tf_static)"/>
+  </node>
+
+  <node pkg="joint_state_publisher" type="joint_state_publisher" name="joint_state_publisher"/> 
   <node pkg="rviz" type="rviz" name="rviz" args = " -d $(arg rviz_config_file)"/>    
 
   <node name="spawn_urdf" pkg="gazebo_ros" type="spawn_model" args="-urdf -model robot -param robot_description"/>

@@ -1,0 +1,22 @@
+CURRENT PUSH ERRORS (None major/workable)
+
+1. GAZEBO TF ERROR
+
+from	 : roswtf
+solution : checkup transofrm tree; base_footprint seemsredundant; conflict with odom in Gazebo
+ 
+Found 2 error(s).
+
+ERROR TF re-parenting contention:
+ * reparenting of [base_link] to [base_footprint] by [/robot_state_publisher]
+ * reparenting of [base_link] to [odom] by [/gazebo]
+
+ERROR TF multiple authority contention:
+ * node [/robot_state_publisher] publishing transform [base_link] with parent [base_footprint] already published by node [/gazebo]
+ * node [/gazebo] publishing transform [base_link] with parent [odom] already published by node [/robot_state_publisher]
+
+
+2. MODEL ERROR
+
+axle point of wheel at bottom, to be in middle
+base body to be elevated according to the wheel radius

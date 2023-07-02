@@ -7,7 +7,7 @@
 # new environment variables
 
 # modified environment variables
-export CMAKE_PREFIX_PATH="/home/acer/Autonomous_vehicle/devel:$CMAKE_PREFIX_PATH"
-export PWD='/home/acer/Autonomous_vehicle/build'
-export ROSLISP_PACKAGE_DIRECTORIES='/home/acer/Autonomous_vehicle/devel/share/common-lisp'
-export ROS_PACKAGE_PATH="/home/acer/Autonomous_vehicle/src:$ROS_PACKAGE_PATH"
+export LD_LIBRARY_PATH='/opt/ros/noetic/lib:/usr/lib/x86_64-linux-gnu/gazebo-11/plugins'
+export PATH='/opt/ros/noetic/bin:/home/ubuntu/.pyenv/versions/3.10.11/bin:/home/ubuntu/.pyenv/libexec:/home/ubuntu/.pyenv/plugins/python-build/bin:/home/ubuntu/.pyenv/shims:/home/ubuntu/.pyenv/bin:/usr/lib/ccache:/home/ubuntu/ardupilot/Tools/autotest:/opt/gcc-arm-none-eabi-10-2020-q4-major/bin:/home/ubuntu/.local/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin'
+export PKG_CONFIG_PATH='/opt/ros/noetic/lib/pkgconfig'
+export ROS_PACKAGE_PATH='/home/ubuntu/Autonomous_vehicle/src:/opt/ros/noetic/share'

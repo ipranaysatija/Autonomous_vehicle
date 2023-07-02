@@ -1,237 +1,162 @@
-<?xml version='1.0'?>
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="robot">
+<xacro:include filename="$(find robot)/urdf/robot.gazebo" />
 
-<robot name="robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+<xacro:property name="c1"       value="0.083"/>
+<xacro:property name="c2"       value="0.5"/>
+<xacro:property name="mass"     value="1"/>
+<xacro:property name="width"    value="0.8"/>
+<xacro:property name="height"   value="0.1"/>
+<xacro:property name="depth"    value="0.7 "/>
+<xacro:property name="radius"   value="0.15 "/>
 
-	<xacro:include filename="$(find robot)/urdf/robot.gazebo" />
 
-	<material name="black">
-		<color rgba="0 0 0 1"/>
-	</material>
+<!--  	#############	BODY		############		 -->
 
-	<link name='robot_footprint'> </link>
 
-	<joint name="robot_footprint_joint" type="fixed"> 
-		<origin xyz="-0.1 0 0" rpy="0 0 0" />
-		<parent link="robot_footprint"/>
-		<child link="robot_body" />
+<!-- BASE LINK AND JOINT -->
+
+  <link name="base_footprint"/> 
+
+  <link name="base_link">   
+    <visual>
+      <origin xyz="0.0 0.0 0.15" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.8 0.7 0.1" />
+      </geometry>
+      <material name="DarkGrey">
+        <color rgba="0.25 0.25 0.25 1.0"/>
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0.0 0.0 0.15" rpy="0.0 0.0 0.0"/>
+      <geometry>
+        <box size="0.8 0.7 0.1" />
+      </geometry>
+    </collision>   
+    <inertial>
+      <mass value="0.5"/>
+      <origin xyz="0.0 0.0 0" rpy="0.0 0.0 0.0"/>
+      <inertia  ixx="${c1 * mass * (height * height + depth * depth)}" ixy="0.0" ixz="0.0" 
+                iyy="${c1 * mass * (height * height + depth * depth)}" iyz="0.0" 
+                izz="${c1 * mass * (height * height + depth * depth)}"/>
+    </inertial>
+  </link>
+
+<joint name="base_footprint_joint" type="fixed">
+		<origin xyz="0 0 0.15" rpy="0 0 0" />
+		<parent link="base_footprint"/>
+		<child link="base_link" />
 	</joint>
 
-	<link name='robot_body'>
-		<pose>0 0 0 0 0 0</pose>
 
-		<inertial>
-			<mass value="3"/>
-			<origin xyz="0 0 0" rpy=" 0 0 0"/>
-			<inertia
-					ixx="0.4298" ixy="0" ixz="0"
-					iyy="0.207" iyz="0"
-					izz="0.236"
-			/>
-		</inertial>
+<!--WHEEL LINKS AND JOINT -->
 
-		<collision name='robot_collision'>
-			<origin xyz="0.15 0 0.075" rpy=" 0 0 0"/>
-			<geometry>
-				<box size="0.3 0.3 0.15"/>
-			</geometry>
-		</collision>
+<xacro:macro name="wheel" params="name x y">
+    <link name="wheel_${name}_link">       
+        <inertial>
+            <origin xyz="0 0 0" rpy="0 0 0"/>
+            <mass value="0.25"/>
+            <inertia  ixx="${c2 * mass * (radius*radius)}" ixy="0.0" ixz="0.0" 
+                      iyy="${c2 * mass * (radius*radius)}" iyz="0.0" 
+                      izz="${c2 * mass * (radius*radius)}"/>
+        </inertial>
+        <visual name="wheel_${name}_visual">
+            <origin xyz="0.0 0.0 0.15" rpy="1.57 0.0 0.0"/>
+            <geometry>
+              <cylinder radius="0.15" length="0.1"/>            
+            </geometry>
+            <material name="LightGrey">
+              <color rgba="0.7 0.7 0.7 1.0"/>
+            </material>
+        </visual>       
+        <collision>
+            <origin xyz="0.0 0.0 0.15" rpy="1.57 0.0 0.0"/>
+            <geometry>
+              <cylinder radius="0.15" length="0.1"/>            
+            </geometry>
+        </collision>
+    </link>
+    <joint name="wheel_${name}_joint" type="continuous">
+        <origin xyz="${x} ${y} 0.15" rpy="0 0 0"/>
+        <parent link="base_link"/>
+        <child link="wheel_${name}_link"/>
+        <axis xyz="0 1 0"/>
+        <limit velocity="100.0" effort="1000.0" />
+        <dynamics damping="1.0" friction="1.0"/>
+    </joint>
+</xacro:macro>
 
-		<visual name='robot_visual'>
-			<origin xyz="0.15 0 0.075" rpy=" 0 0 0"/>
-			<geometry>
-				<box size="0.3 0.3 0.15"/>
-			</geometry>
-		</visual>
-	</link>
-	
-	<link name='left_wheel'>
-		<pose>0 0 0 0 0 0</pose>
+<!-- Wheel Creating using macros -->
+<xacro:wheel name="rear_right"  x="0.250" y =" 0.40"/>
+<xacro:wheel name="front_right" x="-0.250" y =" 0.40"/>
+<xacro:wheel name="front_left"  x="-0.250" y =" -0.40"/>
+<xacro:wheel name="rear_left"   x="0.250" y =" -0.40"/>
 
-		<inertial>
-			<mass value="2"/>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<inertia
-					ixx="0.000225" ixy="0" ixz="0"
-					iyy="0.000225" iyz="0"
-					izz="0.0004375"
-			/>
-		</inertial>
 
-		<collision name='left_wheel_collision'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry>
-				<cylinder radius="0.05" length="0.04"/>
-			</geometry>
-		</collision>
 
-		<visual name='left_wheel_visual'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>   
-			<geometry>
-				<cylinder radius="0.05" length="0.04"/>
-			</geometry>
-			<material name="black"/>
-		</visual>
-	</link>
 
-	<link name='right_wheel'>
-		<pose>0 0 0 0 0 0</pose>
+<!--  	#############	SENSORS		############		 -->
 
-		<inertial>
-			<mass value="2"/>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<inertia
-					ixx="0.000225" ixy="0" ixz="0"
-					iyy="0.000225" iyz="0"
-					izz="0.0004375"
-			/>
-		</inertial>
 
-		<collision name='right_wheel_collision'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry>
-				<cylinder radius="0.05" length="0.04"/>
-			</geometry>
-		</collision>
+     <!-- HOKUYO LASER	 -->
 
-		<visual name='right_wheel_visual'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry>
-				<cylinder radius="0.05" length="0.04"/>
-			</geometry>
-			<material name="black"/>
-		</visual>
-	</link>
-
-	<link name="caster_wheel">
-	<pose>0 0 0 0 0 0</pose>
-
-	<inertial>
-			<mass value="2"/>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<inertia
-					ixx="0.000225" ixy="0" ixz="0"
-					iyy="0.000225" iyz="0"
-					izz="0.0004375"
-			/>
-	</inertial>
-
-		<collision name='caster_wheel_collision'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
-			<geometry>
-				<sphere radius="0.05" />
-			</geometry>
-		</collision>
-
-    <visual>
-        <geometry>
-            <sphere radius="0.05" />
-        </geometry>
-        <material name="black"/>
-    </visual>
-</link>
-
-<!-- Link for sensors -->
-
-     <!-- Hokuyo Laser -->
   <link name="hokuyo_link">
     <collision>
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0 " rpy="0 0 0"/>
       <geometry>
-         <box size="0.1 0.1 0.1"/>
+         <box size="0.05 0.05 0.05"/>
       </geometry>
     </collision>
-
     <visual>
       <origin xyz="0 0 0" rpy="0 0 0"/>
       <geometry>
-	    <box size="0.1 0.1 0.1"/>
-        <!--<mesh filename="package://robot_description/meshes/hokuyo.dae"/>-->
+	    <box size="0.05 0.05 0.2"/>
       </geometry>
     </visual>
-
     <inertial>
       <mass value="1e-5" />
-      <origin xyz="0 0 0" rpy="0 0 0"/>
+      <origin xyz="0 0 0.15" rpy="0 0 0"/>
       <inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
     </inertial>
   </link>
 
- <!--Top view rotatary Camera -->
-<!--	 <link name="camera_link_top">
+  	<joint name="hokuyo_joint" type="fixed">
+    <axis xyz="0 1 0" />
+    <origin xyz="0 0 0.35" rpy="0 0 0"/>
+    <parent link="base_link"/>
+    <child link="hokuyo_link"/>
+    </joint>
+
+
+ <!-- CAMERA -->
+
+	 <link name="camera_link_top">
 		<collision name="camera_top_collision">
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 0 " rpy="0 0 0"/>
 			<geometry>
 		<box size="0.04 0.024 0.003"/>
 			</geometry>
 		</collision>
 		<visual name='camera_top_visual'>
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0 0 0 " rpy="0 0 0"/>
 			<geometry>
 		<box size="0.04 0.024 0.003"/>
 			</geometry>
 		</visual>
-
 		<inertial>
 			<mass value="1e-5" />
-			<origin xyz="0 0 0" rpy="0 0 0"/>
+			<origin xyz="0.4 0 0.15" rpy="0 0 0"/>
 			<inertia ixx="1e-6" ixy="0" ixz="0" iyy="1e-6" iyz="0" izz="1e-6" />
 		</inertial>
-	</link>-->
-
-
-	<joint type="continuous" name="left_wheel_hinge">
-		<origin xyz="0.05 0.175 0" rpy="-${pi/2} 0 0"/>
-		<child link="left_wheel"/>
-		<parent link="robot_body"/>
-		<axis xyz="0 0 1" rpy="0 0 0"/>
-		<limit effort="10000" velocity="2000"/>
-		<dynamics damping="1.0" friction="1.0"/>
-	</joint>
-
-	<joint type="continuous" name="right_wheel_hinge">
-		<origin xyz="0.05 -0.175 0" rpy="-${pi/2} 0  0 "/>
-		<child link="right_wheel"/>
-		<parent link="robot_body"/>
-		<axis xyz="0 0 1" rpy="0 0 0"/>
-		<limit effort="10000" velocity="2000"/>
-		<dynamics damping="1.0" friction="1.0"/>
-	</joint>
-
-	<joint name="caster_wheel_joint" type="fixed">
-    <parent link="robot_body"/>
-    <child link="caster_wheel"/>
-    <origin xyz="0.24 0 0" rpy="0 0 0"/>
-	<limit effort="10000" velocity="2000"/>
-	<dynamics damping="1.0" friction="1.0"/>
-	</joint>
-
-	<joint name="hokuyo_joint" type="fixed">
-    <axis xyz="0 1 0" />
-    <origin xyz="0.2 0 0.175" rpy="0 0 0"/>
-    <parent link="robot_body"/>
-    <child link="hokuyo_link"/>
-    </joint>
-
-<!--	<joint type="fixed" name="camera_joint_top">
+	</link>
+  
+ 	<joint type="fixed" name="camera_joint_top">
 		<axis xyz="0 1 0" />
-		<origin xyz="0 0 0.2" rpy="0 0 0"/>
-		<parent link="robot_body"/>
+		<origin xyz="0.4 0 0.15" rpy="0 0 0"/>
+		<parent link="base_link"/>
 		<child link="camera_link_top"/>
 	</joint>
--->
-		
-	<gazebo reference="left_wheel">
-		<material>Gazebo/Black</material>
-	</gazebo>
 
-	<gazebo reference="right_wheel">
-		<material>Gazebo/Black</material>
-	</gazebo>
 
-	<gazebo reference="caster_wheel">
-		<material>Gazebo/Black</material>
-	</gazebo>
-	<gazebo reference="robot_body">
-		<material>Gazebo/Yellow</material>
-	</gazebo>
 </robot>
